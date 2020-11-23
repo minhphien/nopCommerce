@@ -1,4 +1,5 @@
-﻿using Nop.Core.Caching;
+﻿using System.Globalization;
+using Nop.Core.Caching;
 
 namespace Nop.Services.Common
 {
@@ -72,7 +73,7 @@ namespace Nop.Services.Common
         /// <summary>
         /// Gets a path to the localization client-side validation 
         /// </summary>
-        public static string LocalePatternPath => "lib\\cldr-data\\main\\{0}";
+        public static string LocalePatternPath => "lib_npm\\cldr-data\\main\\{0}";
 
         /// <summary>
         /// Gets a name of the archive with localization of templates
@@ -83,6 +84,16 @@ namespace Nop.Services.Common
         /// Gets a name of the default pattern locale
         /// </summary>
         public static string DefaultLocalePattern => "en";
+
+        /// <summary>
+        /// Gets default CultureInfo 
+        /// </summary>
+        public static CultureInfo DefaultLanguageCulture => new CultureInfo("en-US");
+
+        /// <summary>
+        /// Gets minimal progress of language pack translation to download and install
+        /// </summary>
+        public static int LanguagePackMinTranslationProgressToInstall => 80;
 
         #endregion
 
@@ -118,9 +129,9 @@ namespace Nop.Services.Common
         /// {1} : whether the store based is on the localhost
         /// {2} : admin email
         /// {3} : store URL
-        /// {4} : language code
+        /// {4} : language culture
         /// </remarks>
-        public static string NopInstallationCompletedPath => "installation-completed?version={0}&local={1}&email={2}&url={3}&language={4}";
+        public static string NopInstallationCompletedPath => "installation-completed?version={0}&local={1}&email={2}&url={3}&culture={4}";
 
         /// <summary>
         /// Gets a path to request the nopCommerce official site for available categories of marketplace extensions

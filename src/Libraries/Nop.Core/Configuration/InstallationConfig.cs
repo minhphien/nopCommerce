@@ -14,5 +14,10 @@
         /// Gets or sets a list of plugins ignored during nopCommerce installation
         /// </summary>
         public string DisabledPlugins { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether a store owner can install regional language pack 
+        /// </summary>
+        public bool InstallRegionalResources { get; set; } = true;
     }
 }

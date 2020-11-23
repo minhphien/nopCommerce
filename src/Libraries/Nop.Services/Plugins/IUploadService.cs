@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using Microsoft.AspNetCore.Http;
 
 namespace Nop.Services.Plugins
@@ -30,6 +31,7 @@ namespace Nop.Services.Plugins
         /// <summary>
         /// Upload locale pattern for ccurrent culture
         /// </summary>
-        void UploadLocalePattern();
+        /// <param name="cultureInfo">CultureInfo</param>
+        void UploadLocalePattern(CultureInfo cultureInfo = null);
     }
 }

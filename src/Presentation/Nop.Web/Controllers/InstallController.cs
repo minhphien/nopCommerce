@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Newtonsoft.Json;
 using Nop.Core;
 using Nop.Core.Caching;
 using Nop.Core.Configuration;
+using Nop.Core.Http;
 using Nop.Core.Infrastructure;
 using Nop.Data;
 using Nop.Services.Common;
@@ -42,6 +47,59 @@ namespace Nop.Web.Controllers
 
         #endregion
 
+        #region Utilites
+
+        private InstallModel PrepareCulturesList (InstallModel model)
+        {
+            if (model.InstallRegionalResources)
+            {
+                model.AvailableCountries.AddRange(
+                CultureInfo.GetCultures(CultureTypes.SpecificCultures)
+                    .OrderBy(cultureInfo => new RegionInfo(cultureInfo.Name).DisplayName)
+                    .Where(cultureInfo => cultureInfo.TwoLetterISOLanguageName.Count() == 2)
+                    .Select(cultureInfo => new SelectListItem
+                    {
+                        Value = cultureInfo.Name,
+                        Text = $"{new RegionInfo(cultureInfo.Name).DisplayName} ({cultureInfo.IetfLanguageTag})",
+                        Selected = cultureInfo.Name == NopCommonDefaults.DefaultLanguageCulture.Name
+                    })
+                );
+            }
+
+            return model;
+        }
+
+        private InstallModel PrepareLanguagesList (InstallModel model)
+        {
+            foreach (var lang in _locService.GetAvailableLanguages())
+            {
+                model.AvailableLanguages.Add(new SelectListItem
+                {
+                    Value = Url.Action("ChangeLanguage", "Install", new { language = lang.Code }),
+                    Text = lang.Name,
+                    Selected = _locService.GetCurrentLanguage().Code == lang.Code
+                });
+            }
+
+            return model;
+        }
+
+        private InstallModel PrepareAvailableDataProviders (InstallModel model)
+        {
+            model.AvailableDataProviders.AddRange(
+                _locService.GetAvailableProviderTypes()
+                .OrderBy(v => v.Value)
+                .Select(pt => new SelectListItem
+                {
+                    Value = pt.Key.ToString(),
+                    Text = pt.Value
+                }));
+
+            return model;
+        }
+
+        #endregion
+
         #region Methods
 
         public virtual IActionResult Index()
@@ -53,6 +111,7 @@ namespace Nop.Web.Controllers
             {
                 AdminEmail = "admin@yourStore.com",
                 InstallSampleData = false,
+                InstallRegionalResources = _appSettings.InstallationConfig.InstallRegionalResources,
 
                 //fast installation service does not support SQL compact
                 DisableSampleDataOption = _appSettings.InstallationConfig.DisableSampleData,
@@ -61,24 +120,9 @@ namespace Nop.Web.Controllers
                 DataProvider = DataProviderType.SqlServer
             };
 
-            model.AvailableDataProviders.AddRange(
-                _locService.GetAvailableProviderTypes()
-                .OrderBy(v => v.Value)
-                .Select(pt => new SelectListItem
-                {
-                    Value = pt.Key.ToString(),
-                    Text = pt.Value
-                }));
-
-            foreach (var lang in _locService.GetAvailableLanguages())
-            {
-                model.AvailableLanguages.Add(new SelectListItem
-                {
-                    Value = Url.Action("ChangeLanguage", "Install", new { language = lang.Code }),
-                    Text = lang.Name,
-                    Selected = _locService.GetCurrentLanguage().Code == lang.Code
-                });
-            }
+            PrepareAvailableDataProviders(model);
+            PrepareLanguagesList(model);
+            PrepareCulturesList(model);
 
             return View(model);
         }
@@ -90,27 +134,12 @@ namespace Nop.Web.Controllers
             if (DataSettingsManager.DatabaseIsInstalled)
                 return RedirectToRoute("Homepage");
 
-            //prepare language list
-            foreach (var lang in _locService.GetAvailableLanguages())
-            {
-                model.AvailableLanguages.Add(new SelectListItem
-                {
-                    Value = Url.Action("ChangeLanguage", "Install", new { language = lang.Code }),
-                    Text = lang.Name,
-                    Selected = _locService.GetCurrentLanguage().Code == lang.Code
-                });
-            }
-
-            model.AvailableDataProviders.AddRange(
-                _locService.GetAvailableProviderTypes()
-                    .OrderBy(v => v.Value)
-                    .Select(pt => new SelectListItem
-                    {
-                        Value = pt.Key.ToString(),
-                        Text = pt.Value
-                    }));
-
             model.DisableSampleDataOption = _appSettings.InstallationConfig.DisableSampleData;
+            model.InstallRegionalResources = _appSettings.InstallationConfig.InstallRegionalResources;
+
+            PrepareAvailableDataProviders(model);
+            PrepareLanguagesList(model);            
+            PrepareCulturesList(model);
 
             //Consider granting access rights to the resource to the ASP.NET request identity. 
             //ASP.NET has a base process identity 
@@ -175,9 +204,55 @@ namespace Nop.Web.Controllers
 
                 dataProvider.InitializeDatabase();
 
+                var installRegionalResources = _appSettings.InstallationConfig.InstallRegionalResources;
+                var cultureInfo = installRegionalResources ? new CultureInfo(model.Country) : null;
+
+                //get language pack
+                if (cultureInfo != null && cultureInfo.Name != NopCommonDefaults.DefaultLanguageCulture.Name)
+                {
+                    try
+                    {
+                        var client = EngineContext.Current.Resolve<NopHttpClient>();
+                        var resultString = await client.InstallationCompletedAsync(model.AdminEmail, cultureInfo.Name);
+                        var result = JsonConvert.DeserializeAnonymousType(resultString,
+                            new { Message = string.Empty, LanguagePack = new { Culture = string.Empty, Progress = 0, DownloadLink = string.Empty } });
+                        if (result.LanguagePack.Progress > NopCommonDefaults.LanguagePackMinTranslationProgressToInstall)
+                        {
+                            //download language pack
+                            var downloadUrl = result.LanguagePack.DownloadLink;
+                            if (!string.IsNullOrEmpty(downloadUrl))
+                            {
+                                var directoryPath = _fileProvider.MapPath(NopInstallationDefaults.LocalizationResourcesPath);
+                                var pattern = $"language_pack.{cultureInfo.Name}.xml";
+
+                                //prepare URL to download
+                                var httpClientFactory = EngineContext.Current.Resolve<IHttpClientFactory>();
+                                var httpClient = httpClientFactory.CreateClient(NopHttpDefaults.DefaultHttpClient);
+                                var stream = await httpClient.GetByteArrayAsync(downloadUrl);
+                                using var fs = new FileStream(_fileProvider.Combine(directoryPath, pattern), FileMode.OpenOrCreate);
+                                await fs.WriteAsync(stream, 0, stream.Length);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception(ex.Message);
+                    }
+                }
+
                 //now resolve installation service
                 var installationService = EngineContext.Current.Resolve<IInstallationService>();
-                installationService.InstallRequiredData(model.AdminEmail, model.AdminPassword);
+
+                installationService.InstallRequiredData(model.AdminEmail, model.AdminPassword,
+                    installRegionalResources ? new RegionInfo(model.Country) : null,
+                    installRegionalResources ? new CultureInfo(model.Country) : null);
+
+                if (installRegionalResources)
+                {
+                    //upload CLDR
+                    var uploadService = EngineContext.Current.Resolve<IUploadService>();
+                    uploadService.UploadLocalePattern(new CultureInfo(model.Country));
+                }
 
                 if (model.InstallSampleData)
                     installationService.InstallSampleData(model.AdminEmail);
@@ -211,15 +286,6 @@ namespace Nop.Web.Controllers
                     var provider = (IPermissionProvider)Activator.CreateInstance(providerType);
                     EngineContext.Current.Resolve<IPermissionService>().InstallPermissions(provider);
                 }
-
-                //installation completed notification
-                try
-                {
-                    var languageCode = _locService.GetCurrentLanguage().Code;
-                    var client = EngineContext.Current.Resolve<NopHttpClient>();
-                    await client.InstallationCompletedAsync(model.AdminEmail, languageCode[0..2]);
-                }
-                catch { }
 
                 return View(new InstallModel { RestartUrl = Url.RouteUrl("Homepage") });
 
