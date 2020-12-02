@@ -42,7 +42,7 @@
   <LocaleResource Name="CreateDatabaseIfDoesNotExist">
     <Value>Create database if it doesn't exist</Value>
   </LocaleResource>
-  <LocaleResource Name="CreateSampleData"> 
+  <LocaleResource Name="CreateSampleData">
     <Value>Create sample data</Value>
   </LocaleResource>
   <LocaleResource Name="CustomCollation">
@@ -83,7 +83,7 @@
   </LocaleResource>
   <LocaleResource Name="Installing">
     <Value>Installing nopCommerce...</Value>
-  </LocaleResource>  
+  </LocaleResource>
   <LocaleResource Name="IntegratedAuthentication">
     <Value>Use integrated Windows authentication</Value>
   </LocaleResource>

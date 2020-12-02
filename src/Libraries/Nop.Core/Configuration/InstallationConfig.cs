@@ -16,7 +16,7 @@
         public string DisabledPlugins { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets or sets a value indicating whether a store owner can install regional language pack 
+        /// Gets or sets a value indicating whether to download and setup the regional language pack during installation
         /// </summary>
         public bool InstallRegionalResources { get; set; } = true;
     }

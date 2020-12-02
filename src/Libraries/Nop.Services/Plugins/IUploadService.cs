@@ -29,7 +29,7 @@ namespace Nop.Services.Plugins
         void UploadFavicon(IFormFile favicon);
 
         /// <summary>
-        /// Upload locale pattern for ccurrent culture
+        /// Upload locale pattern for current culture
         /// </summary>
         /// <param name="cultureInfo">CultureInfo</param>
         void UploadLocalePattern(CultureInfo cultureInfo = null);

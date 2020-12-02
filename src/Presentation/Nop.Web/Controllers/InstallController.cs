@@ -212,8 +212,9 @@ namespace Nop.Web.Controllers
                 {
                     try
                     {
+                        var languageCode = _locService.GetCurrentLanguage().Code[0..2];
                         var client = EngineContext.Current.Resolve<NopHttpClient>();
-                        var resultString = await client.InstallationCompletedAsync(model.AdminEmail, cultureInfo.Name);
+                        var resultString = await client.InstallationCompletedAsync(model.AdminEmail, languageCode, cultureInfo.Name);
                         var result = JsonConvert.DeserializeAnonymousType(resultString,
                             new { Message = string.Empty, LanguagePack = new { Culture = string.Empty, Progress = 0, DownloadLink = string.Empty } });
                         if (result.LanguagePack.Progress > NopCommonDefaults.LanguagePackMinTranslationProgressToInstall)
