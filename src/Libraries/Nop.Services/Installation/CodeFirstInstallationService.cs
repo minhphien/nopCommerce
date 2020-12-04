@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using Nop.Core;
 using Nop.Core.Domain;
@@ -32,6 +33,7 @@ using Nop.Core.Domain.Tasks;
 using Nop.Core.Domain.Tax;
 using Nop.Core.Domain.Topics;
 using Nop.Core.Domain.Vendors;
+using Nop.Core.Http;
 using Nop.Core.Infrastructure;
 using Nop.Core.Security;
 using Nop.Data;
@@ -448,7 +450,7 @@ namespace Nop.Services.Installation
             }
         }
 
-        protected virtual void InstallLocaleResources(CultureInfo cultureInfo = null)
+        protected virtual void InstallLocaleResources(string languagePackDownloadLink, CultureInfo cultureInfo = null)
         {
             //Install locale resources for default culture (English)
             var defaultLanguage = _languageRepository.Table.Single(l => l.Name == NopCommonDefaults.DefaultLanguageCulture.EnglishName);
@@ -465,18 +467,22 @@ namespace Nop.Services.Installation
             }
 
             //Install locale resources for pre-install culture
-            if (cultureInfo is CultureInfo)
+            if (cultureInfo is CultureInfo && !string.IsNullOrEmpty(languagePackDownloadLink))
             {
-                pattern = $"language_pack.{cultureInfo.Name}.xml";
-
-                //Import
-                var additionalLanguage = _languageRepository.Table.Single(l => l.Name == cultureInfo.EnglishName);
-                
-                foreach (var filePath in _fileProvider.EnumerateFiles(directoryPath, pattern))
+                //download language pack
+                try
                 {
-                    using var streamReader = new StreamReader(filePath);
+                    //prepare URL to download
+                    var httpClientFactory = EngineContext.Current.Resolve<IHttpClientFactory>();
+                    var httpClient = httpClientFactory.CreateClient(NopHttpDefaults.DefaultHttpClient);
+                    using var stream = httpClient.GetStreamAsync(languagePackDownloadLink).Result;
+                    using var streamReader = new StreamReader(stream);
+
+                    //Import
+                    var additionalLanguage = _languageRepository.Table.Single(l => l.Name == cultureInfo.EnglishName);
                     localizationService.ImportResourcesFromXml(additionalLanguage, streamReader);
                 }
+                catch { }
             }
         }
 
@@ -9814,7 +9820,11 @@ namespace Nop.Services.Installation
         /// </summary>
         /// <param name="defaultUserEmail">Default user email</param>
         /// <param name="defaultUserPassword">Default user password</param>
-        public virtual void InstallRequiredData(string defaultUserEmail, string defaultUserPassword, RegionInfo regionInfo = null, CultureInfo cultureInfo = null)
+        /// <param name="languagePackDownloadLink">Language pack download link</param>
+        /// <param name="regionInfo">RegionInfo</param>
+        /// <param name="cultureInfo">CultureInfo</param>
+        public virtual void InstallRequiredData(string defaultUserEmail, string defaultUserPassword, string languagePackDownloadLink,
+            RegionInfo regionInfo = null, CultureInfo cultureInfo = null)
         {
             InstallStores();
             InstallMeasures(regionInfo);
@@ -9831,7 +9841,7 @@ namespace Nop.Services.Installation
             InstallSettings(regionInfo);
             InstallCustomersAndUsers(defaultUserEmail, defaultUserPassword);
             InstallTopics();
-            InstallLocaleResources(cultureInfo);
+            InstallLocaleResources(languagePackDownloadLink, cultureInfo);
             InstallActivityLogTypes();
             InstallProductTemplates();
             InstallCategoryTemplates();

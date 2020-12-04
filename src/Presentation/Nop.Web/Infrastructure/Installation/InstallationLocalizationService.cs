@@ -9,6 +9,7 @@ using Nop.Core;
 using Nop.Core.Http;
 using Nop.Core.Infrastructure;
 using Nop.Data;
+using Nop.Services.Common;
 
 namespace Nop.Web.Infrastructure.Installation
 {
@@ -61,6 +62,19 @@ namespace Nop.Web.Infrastructure.Installation
                 return resourceName;
 
             return resourceValue;
+        }
+
+        /// <summary>
+        /// Get current browser culture
+        /// </summary>
+        /// <returns>Current culture</returns>
+        public string GetBrowserCulture()
+        {
+            var httpContext = _httpContextAccessor.HttpContext;
+
+            var curCulture = NopCommonDefaults.DefaultLanguageCulture.Name;
+            httpContext.Request.Headers.TryGetValue(HeaderNames.AcceptLanguage, out var userLanguages);
+            return userLanguages.FirstOrDefault()?.Split(',')[0] ?? curCulture;            
         }
 
         /// <summary>

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -11,7 +9,6 @@ using Newtonsoft.Json;
 using Nop.Core;
 using Nop.Core.Caching;
 using Nop.Core.Configuration;
-using Nop.Core.Http;
 using Nop.Core.Infrastructure;
 using Nop.Data;
 using Nop.Services.Common;
@@ -61,7 +58,7 @@ namespace Nop.Web.Controllers
                     {
                         Value = cultureInfo.Name,
                         Text = $"{new RegionInfo(cultureInfo.Name).DisplayName} ({cultureInfo.IetfLanguageTag})",
-                        Selected = cultureInfo.Name == NopCommonDefaults.DefaultLanguageCulture.Name
+                        Selected = cultureInfo.Name == _locService.GetBrowserCulture()
                     })
                 );
             }
@@ -204,56 +201,49 @@ namespace Nop.Web.Controllers
 
                 dataProvider.InitializeDatabase();
 
-                var installRegionalResources = _appSettings.InstallationConfig.InstallRegionalResources;
-                var cultureInfo = installRegionalResources ? new CultureInfo(model.Country) : null;
-
-                //get language pack
-                if (cultureInfo != null && cultureInfo.Name != NopCommonDefaults.DefaultLanguageCulture.Name)
+                //try to get CultureInfo
+                var selectedCountryCulture = NopCommonDefaults.DefaultLanguageCulture;
+                try
                 {
-                    try
-                    {
-                        var languageCode = _locService.GetCurrentLanguage().Code[0..2];
-                        var client = EngineContext.Current.Resolve<NopHttpClient>();
-                        var resultString = await client.InstallationCompletedAsync(model.AdminEmail, languageCode, cultureInfo.Name);
-                        var result = JsonConvert.DeserializeAnonymousType(resultString,
-                            new { Message = string.Empty, LanguagePack = new { Culture = string.Empty, Progress = 0, DownloadLink = string.Empty } });
-                        if (result.LanguagePack.Progress > NopCommonDefaults.LanguagePackMinTranslationProgressToInstall)
-                        {
-                            //download language pack
-                            var downloadUrl = result.LanguagePack.DownloadLink;
-                            if (!string.IsNullOrEmpty(downloadUrl))
-                            {
-                                var directoryPath = _fileProvider.MapPath(NopInstallationDefaults.LocalizationResourcesPath);
-                                var pattern = $"language_pack.{cultureInfo.Name}.xml";
+                    selectedCountryCulture = new CultureInfo(model.Country);
+                }
+                catch { }
 
-                                //prepare URL to download
-                                var httpClientFactory = EngineContext.Current.Resolve<IHttpClientFactory>();
-                                var httpClient = httpClientFactory.CreateClient(NopHttpDefaults.DefaultHttpClient);
-                                var stream = await httpClient.GetByteArrayAsync(downloadUrl);
-                                using var fs = new FileStream(_fileProvider.Combine(directoryPath, pattern), FileMode.OpenOrCreate);
-                                await fs.WriteAsync(stream, 0, stream.Length);
+                var installRegionalResources = _appSettings.InstallationConfig.InstallRegionalResources;
+                var cultureInfo = installRegionalResources ? selectedCountryCulture : null;
+
+                var downloadUrl = string.Empty;
+                if (installRegionalResources)
+                {
+                    //get language pack
+                    if (cultureInfo != null && cultureInfo != NopCommonDefaults.DefaultLanguageCulture)
+                    {
+                        try
+                        {
+                            var languageCode = _locService.GetCurrentLanguage().Code[0..2];
+                            var client = EngineContext.Current.Resolve<NopHttpClient>();
+                            var resultString = await client.InstallationCompletedAsync(model.AdminEmail, languageCode, cultureInfo.Name);
+                            var result = JsonConvert.DeserializeAnonymousType(resultString,
+                                new { Message = string.Empty, LanguagePack = new { Culture = string.Empty, Progress = 0, DownloadLink = string.Empty } });
+                            if (result.LanguagePack.Progress > NopCommonDefaults.LanguagePackMinTranslationProgressToInstall)
+                            {
+                                downloadUrl = result.LanguagePack.DownloadLink;
                             }
                         }
+                        catch { }
                     }
-                    catch (Exception ex)
-                    {
-                        throw new Exception(ex.Message);
-                    }
+
+                    //upload CLDR
+                    var uploadService = EngineContext.Current.Resolve<IUploadService>();
+                    uploadService.UploadLocalePattern(cultureInfo);
                 }
 
                 //now resolve installation service
                 var installationService = EngineContext.Current.Resolve<IInstallationService>();
 
-                installationService.InstallRequiredData(model.AdminEmail, model.AdminPassword,
+                installationService.InstallRequiredData(model.AdminEmail, model.AdminPassword, downloadUrl,
                     installRegionalResources ? new RegionInfo(model.Country) : null,
-                    installRegionalResources ? new CultureInfo(model.Country) : null);
-
-                if (installRegionalResources)
-                {
-                    //upload CLDR
-                    var uploadService = EngineContext.Current.Resolve<IUploadService>();
-                    uploadService.UploadLocalePattern(new CultureInfo(model.Country));
-                }
+                    installRegionalResources ? cultureInfo : null);
 
                 if (model.InstallSampleData)
                     installationService.InstallSampleData(model.AdminEmail);
