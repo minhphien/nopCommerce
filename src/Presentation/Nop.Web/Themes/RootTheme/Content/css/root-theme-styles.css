@@ -6,23 +6,38 @@
 
 /*********** CSS RESET **********/
 
+@import url("https://fonts.googleapis.com/css?family=Rubik:300,400,500,700&amp;display=swap"); 
 
-* {
-    margin: 0;
-    outline: none;
-    padding: 0;
+@font-face {
+  font-family: 'cartzilla-icons';
+  src: url("../fonts/cartzilla-iconsc17f.ttf") format("truetype"),url("../fonts/cartzilla-iconsc17f.woff") format("woff"),url("../fonts/cartzilla-iconsc17f.svg") format("svg");
+  font-weight: normal;
+  font-style: normal
 }
 
-*, *:before, *:after {
+:root {
+  --font-family-sans-serif: "Rubik", sans-serif;
+  --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace
+}
+
+* {
+  margin: 0;
+  outline: none;
+  padding: 0;
+}
+
+  *, *:before, *:after {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-}
+  }
 
 html {
-    margin: 0;
-    -webkit-text-size-adjust: none;
+  font-family: sans-serif;
+  margin: 0;
+  -webkit-text-size-adjust: none;
 }
+
 
 ol, ul {
     list-style: none;
@@ -53,7 +68,7 @@ input[type="email"],
 input[type="tel"],
 input[type="password"],
 textarea {
-    border-radius: 0;
+    /* border-radius: 0; */
 }
 
 input[type="button"],
@@ -76,11 +91,11 @@ script {
 
 
 body {
-    max-width: 100%;
-    overflow-x: hidden;
-    background-color: #fff;
-    font: normal 14px Arial, Helvetica, sans-serif;
-    color: #777;
+  max-width: 100%;
+  overflow-x: hidden;
+  background-color: #fff;
+  font: 14px "Rubik",sans-serif;
+  color: #777;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -114,7 +129,7 @@ textarea, select {
 
 input, textarea, select {
     font-size: 14px !important;
-    font-family: Arial, Helvetica, sans-serif;
+    /*font-family: Arial, Helvetica, sans-serif;*/
     color: #777;
 }
 
@@ -586,7 +601,7 @@ label, label + * {
 }
 
 .noscript {
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid #373f50;
     background-color: #ff9;
     padding: 30px 15px;
     text-align: center;
@@ -618,7 +633,7 @@ label, label + * {
     overflow: hidden;
     background-color: #fff;
     /*override jQuery UI styles, do not delete doubled properties*/
-    border-radius: 0;
+    /* border-radius: 0; */
     padding: 0;
     font: normal 14px Arial, Helvetica, sans-serif;
 }
@@ -640,7 +655,7 @@ label, label + * {
     padding: 10px 15px;
     /*override jQuery UI styles, do not delete doubled properties*/
     border-width: 0 0 1px;
-    border-radius: 0;
+    /* border-radius: 0; */
     background-image: none;
     padding: 10px 15px !important;
     font-weight: normal;
@@ -672,7 +687,7 @@ label, label + * {
     height: 42px !important;
     margin: 0 !important;
     border: none !important;
-    border-radius: 0;
+    /* border-radius: 0; */
     background: url('../images/close.png') center no-repeat !important;
     padding: 0 !important;
     outline:none !important;
@@ -776,7 +791,7 @@ label, label + * {
 
 /*********** HEADER ***********/
 .admin-header-links {
-    background-color: #333;
+    background-color: #373f50;
     text-align: center;
     color: #eee;
 }
@@ -794,7 +809,7 @@ label, label + * {
 }
 
 .admin-header-links .impersonate a {
-    background-color: #555;
+    background-color: #4b566b;
     padding: 0 15px;
 }
 
@@ -874,9 +889,9 @@ label, label + * {
 
 .header-links span,
 .header-links a {
-    font-size: 12px; /*reset zeroing*/
-    line-height: 36px;
-    text-transform: uppercase;
+  font-size: 0.85rem; /*reset zeroing*/
+  line-height: 36px;
+  text-transform: uppercase;
 }
 
 .header-links a:hover {
@@ -898,7 +913,7 @@ label, label + * {
 .header-lower {
     position: relative;
     z-index: 1;
-    padding: 35px 0;
+    padding: 5px 0;
 }
 
 .header-logo {
@@ -965,7 +980,7 @@ label, label + * {
     background-color: #fff;
     text-align: left;
     /*override jQuery UI styles, do not delete doubled properties*/
-    border-radius: 0;
+    /*/* border-radius: 0; */*/
     padding: 0;
     font: normal 14px Arial, Helvetica, sans-serif;
 }
@@ -985,7 +1000,7 @@ label, label + * {
     /*override jQuery UI styles, do not delete doubled properties*/
     margin: 0 !important;
     border: none !important;
-    border-radius: 0 !important;
+    /*border-radius: 0 !important;*/
     background: none !important;
     padding: 15px !important;
     line-height: normal !important;
@@ -2470,7 +2485,7 @@ label, label + * {
     text-align: center;
     /*override jQuery UI styles, do not delete doubled properties*/
     border: none;
-    border-radius: 0;
+    /*/* border-radius: 0; */*/
     padding: 0;
     font: normal 14px Arial, Helvetica, sans-serif;
     color: #777;
@@ -2483,7 +2498,7 @@ label, label + * {
     color: #fff;
     /*override jQuery UI styles, do not delete doubled properties*/
     border: none;
-    border-radius: 0;
+    /*/* border-radius: 0; */*/
     background-image: none;
     padding: 0 !important;
     font-weight: normal;
@@ -3099,7 +3114,7 @@ label, label + * {
 
 
 .topic-block {
-    margin: 0 0 25px;
+    margin: 5px 0 25px
 }
 
 .topic-block-title {
@@ -5613,7 +5628,7 @@ label, label + * {
 
 .forum-edit-page .toolbar .button:hover,
 .private-message-send-page .toolbar .button:hover {
-    border: #333 1px solid;
+    border: #373f50 1px solid;
 }
 
 .forum-edit-page textarea,
@@ -5669,7 +5684,7 @@ label, label + * {
 .ui-tabs {
     /*override jQuery UI styles, do not delete doubled properties*/
     border: none !important;
-    border-radius: 0;
+    /* border-radius: 0; */
     background: none;
     padding: 0;
     font: normal 14px Arial, Helvetica, sans-serif;
@@ -5684,7 +5699,7 @@ label, label + * {
     /*override jQuery UI styles, do not delete doubled properties*/
     margin: 0 0 30px !important;
     border-width: 0 0 1px;
-    border-radius: 0;
+    /* border-radius: 0; */
     background: none;
     padding: 0 !important;
     line-height: normal;
@@ -5698,7 +5713,7 @@ label, label + * {
     float: none !important;
     margin: 0 0 -1px !important;
     border: none !important;
-    border-radius: 0;
+    /* border-radius: 0; */
     background: none !important;
     padding: 0 !important;
 }
@@ -5805,7 +5820,7 @@ label, label + * {
     /*override jQuery UI styles, do not delete doubled properties*/
     line-height: normal;
     font-size: 14px;
-    font-family: Arial, Helvetica, sans-serif;
+    /*font-family: Arial, Helvetica, sans-serif;*/
     color: #777;
 }
 
@@ -5831,7 +5846,7 @@ label, label + * {
     /*override jQuery UI styles, do not delete doubled properties*/
     line-height: normal;
     font-size: 14px;
-    font-family: Arial, Helvetica, sans-serif;
+    /*font-family: Arial, Helvetica, sans-serif;*/
     color: #777;
 }
 
@@ -5996,8 +6011,8 @@ textarea#PersonalMessage {
 }
 /* Start Navbar style css */
 .navbar-light .navbar-nav .nav-link, .navbar-expand-lg .navbar-nav li {
-    color: #555;
-    font-size: 18px;
+    color: #4b566b;
+    font-size: 1rem;
 }
 .navbar-expand-lg .navbar-nav .nav-link {
     padding: 5px 10px;
@@ -6048,8 +6063,8 @@ textarea#PersonalMessage {
     top: 10px;
 }
 .navbar-expand-lg .navbar-nav li {
-    border-left: 1px solid #ddd;
-    padding: 0 20px;
+    /*border-left: 1px solid #ddd;*/
+    padding: 0 5px;
 }
 .navbar-expand-lg .navbar-nav li:first-child {
     border-left: none;
@@ -6108,7 +6123,7 @@ select {
     line-height: 21px;
 }
 .form-control {
-    border-radius: 0;
+    /* border-radius: 0; */
     padding: 6px;
     max-height: 100%;
 }
@@ -6753,13 +6768,13 @@ label.remember {
             background-color: #f6f6f6;
         }
 
-            .top-menu > li > a {
-                display: block;
-                min-height: 55px;
-                padding: 18px;
-                font-size: 15px;
-                color: #555;
-            }
+          .top-menu > li > a {
+            display: block;
+            min-height: 55px;
+            padding: 18px;
+            font-size: 15px;
+            color: #4b566b;
+          }
 
         .top-menu .sublist {
             display: none;
@@ -8579,14 +8594,14 @@ label.remember {
                 border-left: none;
             }
 
-            .header-menu > ul > li > a {
-                display: block;
-                padding: 5px 10px;
-                line-height: 20px;
-                font-size: 17px; /*reset zeroing*/
-                color: #555;
-                cursor: pointer;
-            }
+          .header-menu > ul > li > a {
+            display: block;
+            padding: 5px 10px;
+            line-height: 20px;
+            font-size: 17px; /*reset zeroing*/
+            color: #4b566b;
+            cursor: pointer;
+          }
 
                 .header-menu > ul > li > a:hover {
                     color: #4ab2f1;
@@ -9703,14 +9718,14 @@ label.remember {
     /*** NAVIGATION ***/
 
 
-    .header-menu {
-        width: 100%;
-        margin: 0 auto 30px;
-        border-top: 1px solid #ddd;
-        border-bottom: 1px solid #ddd;
-        padding: 25px 0;
-        text-align: center;
-    }
+  .header-menu {
+    width: 100%;
+    margin: 0 auto 30px;
+    /*        border-top: 1px solid #ddd;*/
+    border-bottom: 1px solid #ddd;
+    padding: 5px 0;
+    text-align: center;
+  }
 
     .menu-toggle,
     .sublist-toggle {
@@ -9737,14 +9752,14 @@ label.remember {
                 border-left: none;
             }
 
-            .header-menu > ul > li > a {
-                display: block;
-                padding: 5px 10px;
-                line-height: 20px;
-                font-size: 17px; /*reset zeroing*/
-                color: #555;
-                cursor: pointer;
-            }
+          .header-menu > ul > li > a {
+            display: block;
+            padding: 5px 10px;
+            line-height: 20px;
+            font-size: 17px; /*reset zeroing*/
+            color: #4b566b;
+            cursor: pointer;
+          }
 
                 .header-menu > ul > li > a:hover {
                     color: #4ab2f1;
@@ -10220,7 +10235,7 @@ label.remember {
     }
 
     #menu {
-        margin: 0 auto;
+        /*margin: 0 auto;*/
     }
 
     .header-menu .navbar-expand-lg .navbar-nav {
@@ -10829,7 +10844,7 @@ label.remember {
         z-index: 1;
         top: 0;
         left: 0;
-        background-color: #333;
+        background-color: #373f50;
         overflow-x: hidden;
         transition: 0.5s;
         padding-top: 20px;
@@ -10837,7 +10852,7 @@ label.remember {
     }
 
     .slinky-theme-default {
-        background: #333 !important;
+        background: #373f50 !important;
     }
 
     .navbar > .slinky-theme-default {
