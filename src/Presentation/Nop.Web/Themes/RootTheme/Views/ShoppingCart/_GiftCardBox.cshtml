@@ -1,0 +1,35 @@
+﻿@model ShoppingCartModel.GiftCardBoxModel
+@if (Model.Display)
+{
+<div class="giftcard-box">
+    <div class="title">
+        <strong>@T("ShoppingCart.GiftCardCouponCode")</strong>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="hint col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12 col-form-label">@T("ShoppingCart.GiftCardCouponCode.Tooltip")</div>
+            <div class="coupon-code col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                <input name="giftcardcouponcode" id="giftcardcouponcode" type="text" class="gift-card-coupon-code form-control" aria-label="@T("ShoppingCart.GiftCardCouponCode.Label")" />
+                <input type="submit" name="applygiftcardcouponcode" id="applygiftcardcouponcode"
+                       value="@T("ShoppingCart.GiftCardCouponCode.Button")" class="button-2 btn btn-default apply-gift-card-coupon-code-button" />
+            </div>
+            @if (!string.IsNullOrEmpty(Model.Message))
+            {
+                <div class="@(Model.IsApplied ? "message-success alert alert-success" : "message-failure alert alert-danger")">
+                    @Model.Message
+                </div>
+            }
+        </div>
+    </div>
+</div>
+    <script asp-location="Footer">
+        $(document).ready(function () {
+            $('#giftcardcouponcode').on('keydown', function (event) {
+                if (event.keyCode == 13) {
+                    $('#applygiftcardcouponcode').trigger("click");
+                    return false;
+                }
+            });
+        });
+    </script>
+}

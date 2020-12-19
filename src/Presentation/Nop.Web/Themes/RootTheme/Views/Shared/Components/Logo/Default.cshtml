@@ -1,0 +1,11 @@
+﻿@model LogoModel
+@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor httpContextAccessor
+@{ 
+    var url = httpContextAccessor.HttpContext.Request.Scheme + "://" + httpContextAccessor.HttpContext.Request.Host.ToString() + httpContextAccessor.HttpContext.Request.Path.ToString();
+}
+<a href="@Url.RouteUrl("Homepage")" itemscope itemtype="http://schema.org/Organization">
+    <img itemprop="logo" title="" alt="@Model.StoreName" src="@Model.LogoPath">
+    <meta itemprop="name" content="@Model.StoreName">
+    <meta itemprop="url" content='@url'>
+</a>

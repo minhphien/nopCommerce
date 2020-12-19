@@ -1,0 +1,94 @@
+﻿@model TopMenuModel
+@{
+    Html.AppendScriptParts(ResourceLocation.Footer, "~/Themes/RootTheme/Content/js/slinky.min.js");
+}
+<nav class="navbar navbar-expand-lg navbar-light sidenav" id="mySidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()"></a>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div id="menu">
+        <ul class="navbar-nav mx-auto">
+            @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HeaderMenuBefore })
+            @if (Model.DisplayHomepageMenuItem)
+            {
+                <li class="nav-item"><a class="nav-link" href="@Url.RouteUrl("Homepage")">@T("Homepage")</a></li>
+            }
+            @if (!Model.UseAjaxMenu)
+            {
+                var rootCategories = Model.Categories.Where(x => x.IncludeInTopMenu).ToList();
+
+                @foreach (var category in rootCategories)
+                {
+                    var categoryLineModel = new TopMenuModel.CategoryLineModel
+                    {
+                        Category = category
+                    };
+                    @await Html.PartialAsync("_CategoryLine.TopMenu", categoryLineModel)
+                }
+            }
+            @foreach (var topic in Model.Topics)
+            {
+                <li class="nav-item"><a class="nav-link" href="@Url.RouteUrl("Topic", new { SeName = topic.SeName })">@topic.Name</a></li>
+            }
+            @if (Model.NewProductsEnabled && Model.DisplayNewProductsMenuItem)
+            {
+                <li class="nav-item"><a class="nav-link" href="@Url.RouteUrl("NewProducts")">@T("Products.NewProducts")</a></li>
+            }
+            @if (Model.DisplayProductSearchMenuItem)
+            {
+                <li class="nav-item"><a class="nav-link" href="@Url.RouteUrl("ProductSearch")">@T("Search")</a></li>
+            }
+            @if (Model.DisplayCustomerInfoMenuItem)
+            {
+                <li class="nav-item"><a class="nav-link" href="@Url.RouteUrl("CustomerInfo")">@T("Account.MyAccount")</a></li>
+            }
+            @if (Model.BlogEnabled && Model.DisplayBlogMenuItem)
+            {
+                <li class="nav-item"><a class="nav-link" href="@Url.RouteUrl("Blog")">@T("Blog")</a></li>
+            }
+            @if (Model.ForumEnabled && Model.DisplayForumsMenuItem)
+            {
+                <li class="nav-item"><a class="nav-link" href="@Url.RouteUrl("Boards")">@T("Forum.Forums")</a></li>
+            }
+            @if (Model.DisplayContactUsMenuItem)
+            {
+                <li class="nav-item"><a class="nav-link" href="@Url.RouteUrl("ContactUs")">@T("ContactUs")</a></li>
+            }
+            @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.MobHeaderMenuBefore })
+        </ul>
+    </div><!-- /.navbar-collapse -->
+</nav>
+<script asp-location="Footer">
+    // Hello Bar
+    $(window).on('load', function () {
+        //$(window).on('resize', function () {
+        if ($(window).width() >= 991) {
+            $('.navbar .dropdown').hover(function () {
+                $(this).find('.dropdown-menu').first().stop(true, true).delay(100).slideDown();
+            }, function () {
+                $(this).find('.dropdown-menu').first().stop(true, true).delay(100).slideUp()
+            });
+        }
+        //})
+    });
+    var slinky = undefined;
+    $(document).ready(function () {
+        slinky = $('#menu').slinky()
+    })
+</script>
+<script asp-location="Footer">
+    function openNav() {
+        document.getElementById("mySidenav").style.width = "100%";
+    }
+    function closeNav() {
+        document.getElementById("mySidenav").style.width = "0";
+    }
+
+    $(".toggle").click(function () {
+        $(".header").addClass("header-overlay");
+    });
+    $(".closebtn").click(function () {
+        setTimeout(function () {
+            $(".header").removeClass("header-overlay");
+        }, 500);
+    });
+</script>

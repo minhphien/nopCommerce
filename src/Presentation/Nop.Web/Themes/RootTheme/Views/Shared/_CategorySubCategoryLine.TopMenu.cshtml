@@ -1,0 +1,21 @@
+﻿@model Nop.Web.Models.Catalog.CategorySimpleModel
+@if(Model.SubCategories.Count > 0)
+{
+    @await Html.PartialAsync("_SubCategoryLine.TopMenu", Model)
+}
+else
+{
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="@Url.RouteUrl("Category", new { SeName = Model.SeName })">
+            <span class="category-name">@Model.Name</span>
+            @if (Model.NumberOfProducts.HasValue)
+            {
+                @if(Model.NumberOfProducts.Value < 0)
+                {
+                    @:0@(Model.NumberOfProducts.Value)
+                }
+                @T("Categories.TotalProducts", Model.NumberOfProducts.Value)
+            }
+        </a>
+    </li>
+}

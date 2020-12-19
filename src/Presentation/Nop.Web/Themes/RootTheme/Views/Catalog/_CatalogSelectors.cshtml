@@ -1,0 +1,53 @@
+﻿@model CatalogPagingFilteringModel
+<div class="product-selectors clearfix row">@*sorting*@
+    @if (Model.AllowProductSorting)
+    {
+        <div class="product-sorting col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 text-center d-inline-block">
+            <div class="row">
+                <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 product-span">
+                    <span class="float-left">@T("Catalog.OrderBy")</span>
+                </div>
+                <div class="col-12 col-sm-12 col-md-8 col-lg-8 col-xl-8">
+                    @Html.DropDownList("products-orderby", Model.AvailableSortOptions, new { @class = "form-control dropdown-filter", onchange = "setLocation(this.value);", aria_label = T("Catalog.OrderBy.Label") })
+                </div>
+            </div>
+        </div>
+    }
+    @*page size*@
+    @if (Model.AllowCustomersToSelectPageSize)
+    {
+        <div class="product-page-size col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 text-center d-inline-block">
+            <div class="row">
+                <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 product-span">
+                    <span>@T("Catalog.PageSize")</span>
+                </div>
+                <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                    @Html.DropDownList("products-pagesize", Model.PageSizeOptions, new { @class = "form-control dropdown-filter", onchange = "setLocation(this.value);", aria_label = T("Catalog.PageSize.Label") })
+                </div>
+                <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 product-span">
+                    <span>@T("Catalog.PageSize.PerPage")</span>
+                </div>
+            </div>
+        </div>
+    }
+    @*view mode*@
+    @if (Model.AllowProductViewModeChanging)
+    {
+        <div class="product-viewmode col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 text-center d-inline-block">
+            <div class="row">
+                <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 product-span">
+                    <span>@T("Catalog.ViewMode")</span>
+                </div>
+                @if (Model.AvailableViewModes.Count > 1)
+                {
+                    var gridMode = Model.AvailableViewModes[0];
+                    var listMode = Model.AvailableViewModes[1];
+                    <div class="col-12 col-sm-12 col-md-8 col-lg-8 col-xl-8 grid-list-icon">
+                        <a class="viewmode-icon grid @if(gridMode.Selected){<text>selected</text>}" href="@gridMode.Value" title="@gridMode.Text">@gridMode.Text</a>
+                        <a class="viewmode-icon list @if (listMode.Selected){<text>selected</text>}" href="@listMode.Value" title="@listMode.Text">@listMode.Text</a>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

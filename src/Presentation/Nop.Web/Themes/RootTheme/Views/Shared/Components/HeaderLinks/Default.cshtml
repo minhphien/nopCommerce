@@ -1,0 +1,77 @@
+﻿@model HeaderLinksModel
+@inject Nop.Core.IWebHelper webHelper
+<nav class="header-links">
+    <ul class="nav navbar-right">
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HeaderLinksBefore })
+        @if (Model.IsAuthenticated)
+        {
+            <li class="d-inline-block"><a href="@Url.RouteUrl("CustomerInfo")" class="ico-account d-inline-block">@T("Account.MyAccount")@*@Model.CustomerName*@</a></li>
+            <li class="d-inline-block"><a href="@Url.RouteUrl("Logout")" class="ico-logout d-inline-block">@T("Account.Logout")</a></li>
+        }
+        else
+        {
+            var returnUrl = Context.Request.Query.TryGetValue("returnUrl", out var url) && !StringValues.IsNullOrEmpty(url)
+                ? url.ToString()
+                : webHelper.GetRawUrl(Context.Request);
+
+            <li class="d-inline-block"><a href="@Url.RouteUrl("Register", new { returnUrl })" class="ico-register d-inline-block">@T("Account.Register")</a></li>
+            <li class="d-inline-block"><a href="@Url.RouteUrl("Login", new { returnUrl })" class="ico-login d-inline-block">@T("Account.Login")</a></li>
+        }
+        @if (Model.AllowPrivateMessages)
+        {
+            <li class="d-inline-block">
+                <a href="@Url.RouteUrl("PrivateMessages", new { tab = "" })" class="ico-inbox d-inline-block">
+                    <span class="inbox-label d-inline-block">@T("PrivateMessages.Inbox")</span>
+                    <span class="inbox-unread d-inline-block">@Model.UnreadPrivateMessages</span>
+                </a>
+            </li>
+        }
+        @if (Model.WishlistEnabled)
+        {
+            <li class="d-inline-block">
+                <a href="@Url.RouteUrl("Wishlist")" class="ico-wishlist d-inline-block">
+                    <span class="wishlist-label d-inline-block">@T("Wishlist")</span>
+                    <span class="wishlist-qty d-inline-block">@T("Wishlist.HeaderQuantity", Model.WishlistItems)</span>
+                </a>
+            </li>
+        }
+        @if (Model.ShoppingCartEnabled)
+        {
+            <li id="topcartlink" class="d-inline-block">
+                <a href="@Url.RouteUrl("ShoppingCart")" class="ico-cart d-inline-block">
+                    <span class="cart-label d-inline-block">@T("ShoppingCart")</span>
+                    <span class="cart-qty d-inline-block">@T("ShoppingCart.HeaderQuantity", Model.ShoppingCartItems)</span>
+                </a>
+            </li>
+        }
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HeaderLinksAfter })
+    </ul>
+    @if (Model.AllowPrivateMessages && !string.IsNullOrEmpty(Model.AlertMessage))
+    {
+        //new private message notification
+        <script asp-location="Footer">
+            $(document).ready(function () {
+                displayPopupNotification('@Html.Raw(JavaScriptEncoder.Default.Encode(Model.AlertMessage))', 'success', false);
+            });
+        </script>
+    }
+    @if (Model.ShoppingCartEnabled)
+    {
+        <script asp-location="Footer">
+            $(document).ready(function () {
+                $('.header-links-wrapper').on('mouseenter', '#topcartlink', function () {
+                    $('#flyout-cart').addClass('active');
+                });
+                $('.header-links-wrapper').on('mouseleave', '#topcartlink', function () {
+                    $('#flyout-cart').removeClass('active');
+                });
+                $('.header-links-wrapper').on('mouseenter', '#flyout-cart', function () {
+                    $('#flyout-cart').addClass('active');
+                });
+                $('.header-links-wrapper').on('mouseleave', '#flyout-cart', function () {
+                    $('#flyout-cart').removeClass('active');
+                });
+            });
+        </script>
+    }
+</nav>

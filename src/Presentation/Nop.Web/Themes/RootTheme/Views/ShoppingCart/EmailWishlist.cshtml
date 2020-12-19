@@ -1,0 +1,78 @@
+﻿@model WishlistEmailAFriendModel
+@{
+    Layout = "_ColumnsOne";
+
+    //title
+    Html.AddTitleParts(T("PageTitle.WishlistEmailAFriend").Text);
+    //page class
+    Html.AppendPageCssClassParts("html-email-a-friend-page");
+}
+<div class="page email-a-friend-page">
+    <div class="page-title">
+        <h1>@T("Wishlist.EmailAFriend.Title")</h1>
+    </div>
+    <div class="page-body">
+        @if (Model.SuccessfullySent)
+        {
+            <div class="alert alert-success result">
+                @Model.Result
+            </div>
+        }
+        else
+        {
+            <form asp-route="EmailWishlist" method="post">
+                <div asp-validation-summary="ModelOnly" class="message-error"></div>
+                <div class="fieldset">
+                    <div class="form-fields">
+                        <div class="form-group">
+                            <div class="row">
+                                <label class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-form-label" asp-for="FriendEmail" asp-postfix=":"></label>
+                                <div class="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
+                                    <input asp-for="FriendEmail" class="friend-email form-control" placeholder="@T("Wishlist.EmailAFriend.FriendEmail.Hint")" />
+                                </div>
+                                <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
+                                    <span asp-validation-for="FriendEmail"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <label class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-form-label" asp-for="YourEmailAddress" asp-postfix=":"></label>
+                                <div class="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
+                                    <input asp-for="YourEmailAddress" class="your-email form-control" placeholder="@T("Wishlist.EmailAFriend.YourEmailAddress.Hint")" />
+                                </div>
+                                <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
+                                    <span asp-validation-for="YourEmailAddress"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <label class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-form-label" asp-for="PersonalMessage" asp-postfix=":"></label>
+                                <div class="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
+                                    <input asp-for="PersonalMessage" class="personal-message form-control" placeholder="@T("Wishlist.EmailAFriend.PersonalMessage.Hint")" />
+                                </div>
+                                <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
+                                    <span asp-validation-for="PersonalMessage"></span>
+                                </div>
+                            </div>
+                        </div>
+                        @if (Model.DisplayCaptcha)
+                        {
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-12 col-sm-8 offset-md-4 offset-lg-4 offset-xl-4">
+                                        <nop-captcha />
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="buttons">
+                    <input type="submit" name="send-email" class="button-1 btn btn-primary send-email-a-friend-button" value="@T("Wishlist.EmailAFriend.Button")" />
+                </div>
+            </form>
+        }
+    </div>
+</div>

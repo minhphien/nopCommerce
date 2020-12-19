@@ -1,0 +1,70 @@
+﻿@model SendPrivateMessageModel
+@{    
+    Layout = "_ColumnsOne";
+
+    //title
+    Html.AddTitleParts(T("PageTitle.SendPM").Text);
+    //page class
+    Html.AppendPageCssClassParts("html-private-messages");
+    Html.AppendPageCssClassParts("html-private-message-send-page");
+}
+<form asp-route="SendPM" method="post">
+    <div asp-validation-summary="ModelOnly" class="message-error"></div>
+    <div class="page private-messages private-message-send-page">
+        <div class="page-title">
+            <h1>@T("PrivateMessages.Send.PostMessage")</h1>
+        </div>
+        <div class="page-body">
+            <input type="hidden" asp-for="ToCustomerId" />
+            <input type="hidden" asp-for="ReplyToMessageId"/>
+            <div class="fieldset">
+                <div class="form-fields">
+                    <div class="form-group">
+                        <div class="row">
+                            <label class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-form-label">@T("PrivateMessages.Send.To")</label>
+                            <div class="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5 customer-name">
+                                @if (Model.AllowViewingToProfile)
+                                {
+                                    <a href="@Url.RouteUrl("CustomerProfile", new {id = Model.ToCustomerId})">@(Model.CustomerToName)</a>
+                                }
+                                else
+                                {
+                                    <span class="forum-subject col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5 text-left">@Model.CustomerToName</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <label class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-form-label">@T("PrivateMessages.Send.Subject")</label>
+                            <div class="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
+                                <input asp-for="Subject" class="pm-title-text form-control" />
+                            </div>
+                            <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center">
+                                <span asp-validation-for="Subject"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group message text-area">
+                        <div class="row">
+                            <label class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-form-label">@T("PrivateMessages.Send.Message")</label>
+                            <div class="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
+                                <div>
+                                    <nop-bb-code-editor asp-for="Message" />
+                                    <textarea asp-for="Message" class="bb-editor-text"></textarea>
+                                </div>
+                                <div class="text-center">
+                                    <span asp-validation-for="Message"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="buttons">
+                <input type="submit" class="button-1 btn btn-primary send-pm-button" value="@T("PrivateMessages.Send.SendButton")"/>
+                <input type="button" class="button-2 btn btn-default cancel-pm-button" value="@T("PrivateMessages.Send.CancelButton")" onclick="setLocation('@Url.RouteUrl("PrivateMessages")')"/>
+            </div>
+        </div>
+    </div>
+</form>

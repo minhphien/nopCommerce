@@ -1,0 +1,251 @@
+﻿@model AddressModel
+
+<input asp-for="Id" type="hidden"/>
+<div class="edit-address">
+    <div class="fieldset">
+        <div class="form-fields">
+            <div class="form-group">
+                <div class="row">
+                    <label asp-for="FirstName" asp-postfix=":" class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-form-label"></label>
+                    <div class="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
+                        <input asp-for="FirstName" class="form-control" />
+                    </div>
+                    <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
+                        <nop-required />
+                    </div>
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center">
+                        <span asp-validation-for="FirstName"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label asp-for="LastName" asp-postfix=":" class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-form-label"></label>
+                    <div class="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
+                        <input asp-for="LastName" class="form-control" />
+                    </div>
+                    <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
+                        <nop-required />
+                    </div>
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center">
+                        <span asp-validation-for="LastName"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label asp-for="Email" asp-postfix=":" class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-form-label"></label>
+                    <div class="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
+                        <input asp-for="Email" class="form-control" />
+                    </div>
+                    <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
+                        <nop-required />
+                    </div>
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center">
+                        <span asp-validation-for="Email"></span>
+                    </div>
+                </div>
+            </div>
+            @if (Model.CompanyEnabled)
+            {
+                <div class="form-group">
+                    <div class="row">
+                        <label asp-for="Company" asp-postfix=":" class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-form-label"></label>
+                        <div class="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
+                            <input asp-for="Company" class="form-control" />
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
+                            @if (Model.CompanyRequired)
+                            {
+                                <nop-required />
+                            }
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center">
+                            <span asp-validation-for="Company"></span>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (Model.CountryEnabled)
+            {
+                <div class="form-group">
+                    <div class="row">
+                        <label asp-for="CountryId" asp-postfix=":" class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-form-label"></label>
+                        <div class="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
+                            <select asp-for="CountryId" asp-items="Model.AvailableCountries" class="form-control"
+                                    data-trigger="country-select"
+                                    data-url="@(Url.RouteUrl("GetStatesByCountryId"))"
+                                    data-stateprovince="#@Html.IdFor(model => model.StateProvinceId)"
+                                    data-loading="#states-loading-progress"></select>
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
+                            <nop-required />
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center">
+                            <span asp-validation-for="CountryId"></span>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (Model.CountryEnabled && Model.StateProvinceEnabled)
+            {
+                <div class="form-group">
+                    <div class="row">
+                        <label asp-for="StateProvinceId" asp-postfix=":" class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-form-label"></label>
+                        <div class="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
+                            <select asp-for="StateProvinceId" asp-items="Model.AvailableStates" class="form-control"></select>
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center">
+                            <span id="states-loading-progress" style="display: none;" class="please-wait">@T("Common.Wait...")</span>
+                            <span asp-validation-for="StateProvinceId"></span>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (Model.CountyEnabled)
+            {
+                <div class="form-group">
+                    <div class="row">
+                        <label asp-for="County" asp-postfix=":" class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-form-label"></label>
+                        <div class="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
+                            <input asp-for="County" class="form-control" />
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
+                            @if (Model.CountyRequired)
+                            {
+                                <nop-required />
+                            }
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center">
+                            <span asp-validation-for="County"></span>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (Model.CityEnabled)
+            {
+                <div class="form-group">
+                    <div class="row">
+                        <label asp-for="City" asp-postfix=":" class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-form-label"></label>
+                        <div class="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
+                            <input asp-for="City" class="form-control" />
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
+                            @if (Model.CityRequired)
+                            {
+                                <nop-required />
+                            }
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center">
+                            <span asp-validation-for="City"></span>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (Model.StreetAddressEnabled)
+            {
+                <div class="form-group">
+                    <div class="row">
+                        <label asp-for="Address1" asp-postfix=":" class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-form-label"></label>
+                        <div class="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
+                            <input asp-for="Address1" class="form-control" />
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
+                            @if (Model.StreetAddressRequired)
+                            {
+                                <nop-required />
+                            }
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center">
+                            <span asp-validation-for="Address1"></span>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (Model.StreetAddress2Enabled)
+            {
+                <div class="form-group">
+                    <div class="row">
+                        <label asp-for="Address2" asp-postfix=":" class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-form-label"></label>
+                        <div class="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
+                            <input asp-for="Address2" class="form-control" />
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
+                            @if (Model.StreetAddress2Required)
+                            {
+                                <nop-required />
+                            }
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center">
+                            <span asp-validation-for="Address2"></span>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (Model.ZipPostalCodeEnabled)
+            {
+                <div class="form-group">
+                    <div class="row">
+                        <label asp-for="ZipPostalCode" asp-postfix=":" class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-form-label"></label>
+                        <div class="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
+                            <input asp-for="ZipPostalCode" class="form-control" />
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
+                            @if (Model.ZipPostalCodeRequired)
+                            {
+                                <nop-required />
+                            }
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center">
+                            <span asp-validation-for="ZipPostalCode"></span>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (Model.PhoneEnabled)
+            {
+                <div class="form-group">
+                    <div class="row">
+                        <label asp-for="PhoneNumber" asp-postfix=":" class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-form-label"></label>
+                        <div class="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
+                            <input asp-for="PhoneNumber" class="form-control" />
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
+                            @if (Model.PhoneRequired)
+                            {
+                                <nop-required />
+                            }
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center">
+                            <span asp-validation-for="PhoneNumber"></span>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (Model.FaxEnabled)
+            {
+                <div class="form-group">
+                    <div class="row">
+                        <label asp-for="FaxNumber" asp-postfix=":" class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-form-label"></label>
+                        <div class="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
+                            <input asp-for="FaxNumber" class="form-control" />
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3">
+                            @if (Model.FaxRequired)
+                            {
+                                <nop-required />
+                            }
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center">
+                            <span asp-validation-for="FaxNumber"></span>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (Model.CustomAddressAttributes.Count > 0)
+            {
+                @await Html.PartialAsync("_AddressAttributes", Model.CustomAddressAttributes)
+            }
+        </div>
+    </div>
+</div>

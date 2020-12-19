@@ -1,0 +1,173 @@
+﻿@model FooterModel
+@using Nop.Core
+@using Nop.Core.Domain.Tax
+@inject IWorkContext workContext;
+<footer class="footer">
+    <div class="container">
+        <div class="footer-upper">
+            <div class="row">
+                <div class="footer-block information col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3">
+                    <div class="title">
+                        <strong>@T("Footer.Information")</strong>
+                    </div>
+                    <ul class="list nav flex-column">
+                        @if (Model.SitemapEnabled && Model.DisplaySitemapFooterItem)
+                        {
+                            <li class="nav-item"><a class="nav-link" href="@Url.RouteUrl("Sitemap")">@T("Sitemap")</a></li>
+                        }
+                        @foreach (var topic in Model.Topics.Where(x => x.IncludeInFooterColumn1).ToList())
+                        {
+                            <li class="nav-item"><a class="nav-link" href="@Url.RouteUrl("Topic", new { SeName = topic.SeName })">@topic.Name</a></li>
+                        }
+                        @if (Model.DisplayContactUsFooterItem)
+                        {
+                            <li class="nav-item"><a class="nav-link" href="@Url.RouteUrl("ContactUs")">@T("ContactUs")</a></li>
+                        }
+                    </ul>
+                </div>
+                <div class="footer-block customer-service col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3">
+                    <div class="title">
+                        <strong>@T("Footer.CustomerService")</strong>
+                    </div>
+                    <ul class="list nav flex-column">
+                        @if (Model.DisplayProductSearchFooterItem)
+                        {
+                            <li class="nav-item"><a class="nav-link" href="@Url.RouteUrl("ProductSearch")">@T("Search")</a> </li>
+                        }
+                        @if (Model.NewsEnabled && Model.DisplayNewsFooterItem)
+                        {
+                            <li class="nav-item"><a class="nav-link" href="@Url.RouteUrl("NewsArchive")">@T("News")</a></li>
+                        }
+                        @if (Model.BlogEnabled && Model.DisplayBlogFooterItem)
+                        {
+                            <li class="nav-item"><a class="nav-link" href="@Url.RouteUrl("Blog")">@T("Blog")</a></li>
+                        }
+                        @if (Model.ForumEnabled && Model.DisplayForumsFooterItem)
+                        {
+                            <li class="nav-item"><a class="nav-link" href="@Url.RouteUrl("Boards")">@T("Forum.Forums")</a></li>
+                        }
+                        @if (Model.RecentlyViewedProductsEnabled && Model.DisplayRecentlyViewedProductsFooterItem)
+                        {
+                            <li class="nav-item"><a class="nav-link" href="@Url.RouteUrl("RecentlyViewedProducts")">@T("Products.RecentlyViewedProducts")</a></li>
+                        }
+                        @if (Model.CompareProductsEnabled && Model.DisplayCompareProductsFooterItem)
+                        {
+                            <li class="nav-item"><a class="nav-link" href="@Url.RouteUrl("CompareProducts")">@T("Products.Compare.List")</a></li>
+                        }
+                        @if (Model.NewProductsEnabled && Model.DisplayNewProductsFooterItem)
+                        {
+                            <li class="nav-item"><a class="nav-link" href="@Url.RouteUrl("NewProducts")">@T("Products.NewProducts")</a></li>
+                        }
+                        @foreach (var topic in Model.Topics.Where(x => x.IncludeInFooterColumn2).ToList())
+                        {
+                            <li class="nav-item"><a class="nav-link" href="@Url.RouteUrl("Topic", new { SeName = topic.SeName })">@topic.Name</a></li>
+                        }
+                        @if (Model.AllowCustomersToCheckGiftCardBalance)
+                        {
+                            <li class="nav-item"><a class="nav-link" href="@Url.RouteUrl("CheckGiftCardBalance")">@T("CheckGiftCardBalance")</a></li>
+                        }
+                    </ul>
+                </div>
+                <div class="footer-block my-account col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3">
+                    <div class="title">
+                        <strong>@T("Footer.MyAccount")</strong>
+                    </div>
+                    <ul class="list nav flex-column">
+                        @if (Model.DisplayCustomerInfoFooterItem)
+                        {
+                            <li class="nav-item"><a class="nav-link" href="@Url.RouteUrl("CustomerInfo")">@T("Account.MyAccount")</a></li>
+                        }
+                        @if (Model.DisplayCustomerOrdersFooterItem)
+                        {
+                            <li class="nav-item"><a class="nav-link" href="@Url.RouteUrl("CustomerOrders")">@T("Account.CustomerOrders")</a></li>
+                        }
+                        @if (Model.DisplayCustomerAddressesFooterItem)
+                        {
+                            <li class="nav-item"><a class="nav-link" href="@Url.RouteUrl("CustomerAddresses")">@T("Account.CustomerAddresses")</a></li>
+                        }
+                        @if (Model.ShoppingCartEnabled && Model.DisplayShoppingCartFooterItem)
+                        {
+                            <li class="nav-item"><a class="nav-link" href="@Url.RouteUrl("ShoppingCart")">@T("ShoppingCart")</a></li>
+                        }
+                        @if (Model.WishlistEnabled && Model.DisplayWishlistFooterItem)
+                        {
+                            <li class="nav-item"><a class="nav-link" href="@Url.RouteUrl("Wishlist")">@T("Wishlist")</a></li>
+                        }
+                        @if (Model.AllowCustomersToApplyForVendorAccount && Model.DisplayApplyVendorAccountFooterItem)
+                        {
+                            <li class="nav-item"><a class="nav-link" href="@Url.RouteUrl("ApplyVendorAccount")">@T("Vendors.ApplyAccount")</a></li>
+                        }
+                        @foreach (var topic in Model.Topics.Where(x => x.IncludeInFooterColumn3).ToList())
+                        {
+                            <li><a class="nav-link" href="@Url.RouteUrl("Topic", new {SeName = topic.SeName})">@topic.Name</a></li>
+                        }
+                    </ul>
+                </div>
+                <div class="footer-block follow-us col-12 col-sm-12 col-md-12 col-lg-3 col-xl-3">
+                    <div class="social">
+                        <div class="title">
+                            <strong>@T("Footer.FollowUs")</strong>
+                        </div>
+                        @await Component.InvokeAsync("SocialButtons")
+                    </div>
+                    @await Component.InvokeAsync("NewsletterBox")
+                </div>
+            </div>
+        </div>
+        <div class="footer-lower">
+            <div class="row">
+                @if (!Model.HidePoweredByNopCommerce)
+                {
+                <div class="footer-powered-by col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
+                    @*Would you like to remove the "Powered by nopCommerce" link in the bottom of the footer?
+        Please find more info at https://www.nopcommerce.com/nopcommerce-copyright-removal-key*@
+                    Powered by <a href="https://www.nopcommerce.com/">nopCommerce</a>
+                </div>
+                }
+                <div class="footer-info col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
+                    <span class="footer-disclaimer">@T("Content.CopyrightNotice", DateTime.Now.Year, Model.StoreName)</span><br />
+                    @if (Model.DisplayTaxShippingInfoFooter)
+                    {
+                        var inclTax = workContext.TaxDisplayType == TaxDisplayType.IncludingTax;
+                        <span class="footer-tax-shipping">
+                            @T(inclTax ? "Footer.TaxShipping.InclTax" : "Footer.TaxShipping.ExclTax", Url.RouteUrl("Topic", new { SeName = Html.GetTopicSeName("shippinginfo") }))
+                        </span>
+                    }
+                </div>
+                @await Component.InvokeAsync("StoreThemeSelector")
+            </div>
+           
+        </div>
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.Footer })
+    </div>
+</footer>
+<script asp-location="Footer">
+    $(document).ready(function () {
+        $('.footer-block .title').on('click', function () {
+            var e = window, a = 'inner';
+            if (!('innerWidth' in window)) {
+                a = 'client';
+                e = document.documentElement || document.body;
+            }
+            var result = { width: e[a + 'Width'], height: e[a + 'Height'] };
+            if (result.width < 769) {
+                $(this).siblings('.list').slideToggle('slow');
+            }
+        });
+    });
+</script>
+<script asp-location="Footer">
+    $(document).ready(function () {
+        $('.block .title').on('click', function () {
+            var e = window, a = 'inner';
+            if (!('innerWidth' in window)) {
+                a = 'client';
+                e = document.documentElement || document.body;
+            }
+            var result = { width: e[a + 'Width'], height: e[a + 'Height'] };
+            if (result.width < 1001) {
+                $(this).siblings('.listbox').slideToggle('slow');
+            }
+        });
+    });
+</script>
