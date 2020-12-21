@@ -10821,12 +10821,16 @@ label.remember {
         height: 100% !important;
     }
 
-    .navbar ul.navbar-nav > li.nav-item.dropdown > ul.dropdown-menu.sub-menusublist.first-level > li.nav-item.dropdown > ul.dropdown-menu.sub-menusublist.first-level,
-    .navbar ul.navbar-nav > li.nav-item.dropdown > ul.dropdown-menu.sub-menusublist.first-level > li.nav-item.dropdown > ul.dropdown-menu.sub-menusublist.first-level > li.nav-item.dropdown > ul.dropdown-menu.sub-menusublist.first-level > li.nav-item.dropdown > ul.dropdown-menu.sub-menusublist.first-level,
-    .navbar ul.navbar-nav > li.nav-item.dropdown > ul.dropdown-menu.sub-menusublist.first-level > li.nav-item.dropdown > ul.dropdown-menu.sub-menusublist.first-level > li.nav-item.dropdown > ul.dropdown-menu.sub-menusublist.first-level {
-        margin-left: 0;
-        top: 0;
-    }
+        .navbar ul.navbar-nav > li.nav-item.dropdown > ul.dropdown-menu{
+            min-width: 300px;
+        }
+
+        .navbar ul.navbar-nav > li.nav-item.dropdown > ul.dropdown-menu.sub-menusublist.first-level > li.nav-item.dropdown > ul.dropdown-menu.sub-menusublist.first-level,
+        .navbar ul.navbar-nav > li.nav-item.dropdown > ul.dropdown-menu.sub-menusublist.first-level > li.nav-item.dropdown > ul.dropdown-menu.sub-menusublist.first-level > li.nav-item.dropdown > ul.dropdown-menu.sub-menusublist.first-level > li.nav-item.dropdown > ul.dropdown-menu.sub-menusublist.first-level,
+        .navbar ul.navbar-nav > li.nav-item.dropdown > ul.dropdown-menu.sub-menusublist.first-level > li.nav-item.dropdown > ul.dropdown-menu.sub-menusublist.first-level > li.nav-item.dropdown > ul.dropdown-menu.sub-menusublist.first-level {
+            margin-left: 0;
+            top: 0;
+        }
 
         .navbar-expand-lg .navbar-nav li, .navbar ul.navbar-nav > li.nav-item.dropdown > ul.dropdown-menu.sub-menusublist.first-level > li.nav-item.dropdown > ul.dropdown-menu.sub-menusublist.first-level > li.nav-item.dropdown > ul.dropdown-menu.sub-menusublist.first-level li:last-child {
             border-bottom: 1px solid #515151;
