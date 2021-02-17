@@ -59,10 +59,10 @@ namespace Nop.Plugin.Api.Infrastructure
 
         public void Configure(IApplicationBuilder app)
         {
-            var rewriteOptions = new RewriteOptions()
-                .AddRewrite("api/token", "/token", true);
+            //var rewriteOptions = new RewriteOptions()
+            //    .AddRewrite("api/token", "/token", true);
 
-            app.UseRewriter(rewriteOptions);
+            //app.UseRewriter(rewriteOptions);
 
             app.UseCors(x => x.AllowAnyOrigin()
                              .AllowAnyMethod()

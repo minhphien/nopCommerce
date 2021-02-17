@@ -7,7 +7,6 @@ namespace Nop.Plugin.Api.Infrastructure
         public static class Roles
         {
             public const string ApiRoleSystemName = "ApiUserRole";
-
             public const string ApiRoleName = "Api Users";
         }
 

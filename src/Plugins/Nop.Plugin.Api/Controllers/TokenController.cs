@@ -42,30 +42,38 @@ namespace Nop.Plugin.Api.Controllers
             _apiConfiguration = apiConfiguration;
         }
 
-        [Route("/token")]
-        [HttpGet]
-        public IActionResult Create(TokenRequest model)
+        [Route("/api/token")]
+        public IActionResult Create([FromHeader] string username, [FromHeader] string secret)
         {
-            if (string.IsNullOrEmpty(model.Username))
+            try
             {
-                return Json(new TokenResponse("Missing username"));
-            }
+                if (string.IsNullOrEmpty(username))
+                {
+                    return Json(new TokenResponse("Missing username"));
+                }
 
-            if (string.IsNullOrEmpty(model.Password))
-            {
-                return Json(new TokenResponse("Missing password"));
-            }
+                if (string.IsNullOrEmpty(secret))
+                {
+                    return Json(new TokenResponse("Missing password"));
+                }
 
-            var customer = ValidateUser(model);
+                var customer = ValidateUser(new TokenRequest() { Username = username, Password = secret });
 
-            if (customer != null)
-            {
-                return Json(GenerateToken(customer));
+                if (customer != null)
+                {
+                    return Json(GenerateToken(customer));
+                }
             }
+            catch { }
 
             return Forbid();// new HttpStatusCodeResult(HttpStatusCode.Forbidden);// Json(new TokenResponse("Access Denied"));
         }
 
+        [Route("api/test")]
+        public IActionResult Test()
+        {
+            return Json(new { OK = true });
+        }
         private CustomerLoginResults LoginCustomer(TokenRequest model)
         {
             var loginResult = _customerRegistrationService
